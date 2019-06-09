@@ -13,18 +13,21 @@ $action = "visit_modify.php";
 
 $wishListNO = $_GET["wishListNO"];
 
-mysqli_query($conn, "set autocommit = 0");
-mysqli_query($conn, "set transaction isolation level read committed");
-mysqli_query($conn, "begin");
+// --------------------------------TRANSACION code 여기부터-------------------------------------
+mysqli_query($conn, "set autocommit = 0");					//---------------autocommit 해제
+mysqli_query($conn, "set transaction isolation level read committed"); //isolation level 설정
+mysqli_query($conn, "begin");								//-----------begins a transation
+// --------------------------------TRANSACION code 여기까지-------------------------------------
 
 
 
 
 	$query =  "select * from visitingRequest natural join wishList  where wishListNO = '$wishListNO'";
 	$res = mysqli_query($conn, $query);
-	
+
+// -----------------------TRANSACION code 여기부터-----------------------------------
 	if(!$res) {
-		mysqli_query($conn, "rollback");
+		mysqli_query($conn, "rollback");		// ------------------------TRANSACION
 	}
 	else {
 		
@@ -39,13 +42,14 @@ mysqli_query($conn, "begin");
 		$res2 = mysqli_query($conn, $query2);
 
 		if(!$res2) {
-			mysqli_query($conn, "rollback");
+			mysqli_query($conn, "rollback");	// ------------------------TRANSACION
 		}
 		else {
-			mysqli_query($conn, "commit");
+			mysqli_query($conn, "commit");		// ------------------------TRANSACION
 			$property = mysqli_fetch_array($res2);
 		}
 	}
+// -----------------------TRANSACION code 여기까지-----------------------------------
 
 
 

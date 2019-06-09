@@ -11,18 +11,25 @@ if (!array_key_exists("ID", $_GET)) {
 $connect = dbconnect($host,$dbid,$dbpass,$dbname);
 $check = $_GET["ID"];
 
-mysqli_query($connect, "set autocommit = 0");
-mysqli_query($connect, "set transaction isolation level read committed");
-mysqli_query($connect, "begin");
+// --------------------------------TRANSACION code 여기부터-------------------------------------
+mysqli_query($connect, "set autocommit = 0");					//---------------autocommit 해제
+mysqli_query($connect, "set transaction isolation level read committed"); //isolation level 설정
+mysqli_query($connect, "begin");								//-----------begins a transation
+// --------------------------------TRANSACION code 여기까지-------------------------------------
+
 
 $res = mysqli_query($connect, "select * from property natural left outer join realEstate where realEstateID = '$check'");
+
+// -----------------------TRANSACION code 여기부터-----------------------------------
 if (!$res) {
- 	mysqli_query($connect, "rollback");
+ 	mysqli_query($connect, "rollback");			// ------------------------TRANSACION
     die('Query Error : ' . mysqli_error());
 }
 else {
-	mysqli_query($connect, "commit");
+	mysqli_query($connect, "commit");			// ------------------------TRANSACION
 }
+// -----------------------TRANSACION code 여기까지-----------------------------------
+
 ?>
 <div id="page" class="container">
 	<h1>나의 매물</h1></br>

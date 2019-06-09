@@ -11,18 +11,24 @@ if (!array_key_exists("ID", $_GET)) {
 $connect = dbconnect($host,$dbid,$dbpass,$dbname);
 $check = $_GET["ID"];
 
-mysqli_query($connect, "set autocommit = 0");
-mysqli_query($connect, "set transaction isolation level read committed");
-mysqli_query($connect, "begin");
+// --------------------------------TRANSACION code 여기부터-------------------------------------
+mysqli_query($connect, "set autocommit = 0");					//---------------autocommit 해제
+mysqli_query($connect, "set transaction isolation level read committed"); //isolation level 설정
+mysqli_query($connect, "begin");								//-----------begins a transation
+// --------------------------------TRANSACION code 여기까지-------------------------------------
+
 
 $ret = mysqli_query($connect, "select * from visitingRequest natural right outer join (wishList natural join property) where userID = '$check'");
+
+// -----------------------TRANSACION code 여기부터-----------------------------------
 if (!$ret) {
- 	mysqli_query($connect, "rollback");
+ 	mysqli_query($connect, "rollback");			// ------------------------TRANSACION
     die('Query Error : ' . mysqli_error());
 }
 else {
-	mysqli_query($connect, "commit");
+	mysqli_query($connect, "commit");			// ------------------------TRANSACION
 }
+// -----------------------TRANSACION code 여기까지-----------------------------------
 
 
 ?>

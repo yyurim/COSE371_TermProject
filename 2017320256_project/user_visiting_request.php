@@ -12,20 +12,25 @@ $conn = dbconnect($host, $dbid, $dbpass, $dbname);
 
 $userID = $_GET["userID"];
 
-mysqli_query($conn, "set autocommit = 0");
-mysqli_query($conn, "set transaction isolation level read committed");
-mysqli_query($conn, "begin");
-    
+// --------------------------------TRANSACION code 여기부터-------------------------------------
+mysqli_query($conn, "set autocommit = 0");					//---------------autocommit 해제
+mysqli_query($conn, "set transaction isolation level read committed"); //isolation level 설정
+mysqli_query($conn, "begin");								//-----------begins a transation
+// --------------------------------TRANSACION code 여기까지-------------------------------------
+   
 $query = "select * from (visitingRequest natural join wishList) natural left outer join property where userID = '$userID'";
     
 $res = mysqli_query($conn, $query);
+
+// -----------------------TRANSACION code 여기부터-----------------------------------
 if (!$res) {
-	mysqli_query($conn, "rollback");
+	mysqli_query($conn, "rollback");			// ------------------------TRANSACION
     die('Query Error : ' . mysqli_error());
 }
 else {
-   	mysqli_query($conn, "commit");
+   	mysqli_query($conn, "commit");				// ------------------------TRANSACION
 }
+// -----------------------TRANSACION code 여기까지-----------------------------------
 
 
 ?>

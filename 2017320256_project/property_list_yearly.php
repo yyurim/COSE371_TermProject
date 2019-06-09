@@ -11,10 +11,13 @@ ini_set("display_errors", 1);
 <div id="page" class="container">
     <?
     $conn = dbconnect($host, $dbid, $dbpass, $dbname);
-    
-    mysqli_query($conn, "set autocommit = 0");
-	mysqli_query($conn, "set transaction isolation level read committed");
-	mysqli_query($conn, "begin");
+
+// ------------------------------------TRANSACION code 여기부터-------------------------------------
+	mysqli_query($conn, "set autocommit = 0");					//---------------autocommit 해제
+	mysqli_query($conn, "set transaction isolation level read committed"); //isolation level 설정
+	mysqli_query($conn, "begin");								//-----------begins a transation
+// ------------------------------------TRANSACION code 여기까지-------------------------------------
+
     
     $query = "select * from property natural left join realEstate where contractAs = '전세'";
     if (array_key_exists("search_keyword", $_POST)) {  // array_key_exists() : Checks if the specified key exists in the array
@@ -22,13 +25,16 @@ ini_set("display_errors", 1);
         $query =  $query . " where propertyNO like '%$search_keyword%' or realEstateID like '%$search_keyword%'";
     }
     $res = mysqli_query($conn, $query);
+    
+// -----------------------TRANSACION code 여기부터-----------------------------------
     if (!$res) {
-    	mysqli_query($conn, "rollback");
+    	mysqli_query($conn, "rollback");		// ------------------------TRANSACION
         die('Query Error : ' . mysqli_error());
     }
     else {
-    	mysqli_query($conn, "commit");
+    	mysqli_query($conn, "commit");			// ------------------------TRANSACION
     }
+// -----------------------TRANSACION code 여기까지-----------------------------------
     ?>
 	<h1>전세</h1></br></br>
     <table class="table table-striped table-bordered">

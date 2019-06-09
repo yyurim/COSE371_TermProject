@@ -7,21 +7,25 @@ $conn = dbconnect($host, $dbid, $dbpass, $dbname);
 
 if (array_key_exists("propertyNO", $_GET)) {
     $propertyNO = $_GET["propertyNO"];
-    
-    mysqli_query($conn, "set autocommit = 0");
-	mysqli_query($conn, "set transaction isolation level serializable");
-	mysqli_query($conn, "begin");
-    
+ 
+// ------------------------------------TRANSACION code 여기부터-------------------------------------
+	mysqli_query($conn, "set autocommit = 0");					//---------------autocommit 해제
+	mysqli_query($conn, "set transaction isolation level serializable"); //--isolation level 설정
+	mysqli_query($conn, "begin");								//-----------begins a transation
+// ------------------------------------TRANSACION code 여기까지-------------------------------------
+   
     $query = "select * from property natural left join realEstate where propertyNO = $propertyNO";
     $res = mysqli_query($conn, $query);
     
+ // -----------------------TRANSACION code 여기부터-----------------------------------
     if(!$res) {
-    	mysqli_query($conn, "rollback");
+    	mysqli_query($conn, "rollback");		// ------------------------TRANSACION
     }
     else {
-    	mysqli_query($conn, "commit");
+    	mysqli_query($conn, "commit");			// ------------------------TRANSACION
     }
-    
+// -----------------------TRANSACION code 여기까지-----------------------------------
+   
     $property = mysqli_fetch_assoc($res);
     if (!$property) {
         msg("PRODUCT DOESN'T EXIST.");

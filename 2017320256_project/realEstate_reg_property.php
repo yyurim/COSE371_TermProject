@@ -10,9 +10,12 @@ $conn = dbconnect($host, $dbid, $dbpass, $dbname);
 $mode = "등록하기";
 $action = "property_insert.php";
 
-mysqli_query($conn, "set autocommit = 0");
-mysqli_query($conn, "set transaction isolation level read committed");
-mysqli_query($conn, "begin");
+// --------------------------------TRANSACION code 여기부터-------------------------------------
+mysqli_query($conn, "set autocommit = 0");					//---------------autocommit 해제
+mysqli_query($conn, "set transaction isolation level read committed"); //isolation level 설정
+mysqli_query($conn, "begin");								//-----------begins a transation
+// --------------------------------TRANSACION code 여기까지-------------------------------------
+
 
 if (array_key_exists("propertyNO", $_GET)) {
     $propertyNO = $_GET["propertyNO"];

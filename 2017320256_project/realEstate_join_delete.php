@@ -8,22 +8,27 @@ $conn = dbconnect($host,$dbid,$dbpass,$dbname);
 
 $realEstateID = $_GET["realEstateID"];
 
-mysqli_query($conn, 'set autocommit = 0');
-mysqli_query($conn, 'set transaction isolation level read uncommitted');
-mysqli_query($conn, 'begin');
+// -----------------------------------TRANSACION code 여기부터-------------------------------------
+mysqli_query($conn, "set autocommit = 0");					//------------------autocommit 해제
+mysqli_query($conn, "set transaction isolation level read uncommitted"); //-isolation level 설정
+mysqli_query($conn, "begin");								//--------------begins a transation
+// -----------------------------------TRANSACION code 여기까지-------------------------------------
 
 $ret = mysqli_query($conn, "delete from realEstate where realEstateID = '$realEstateID'");
 
+// -----------------------TRANSACION code 여기부터-----------------------------------
 if(!$ret)
 {
-	mysqli_query($conn, "rollback");
+	mysqli_query($conn, "rollback");			// ------------------------TRANSACION
     msg('Query Error : '.mysqli_error($conn));
 }
 else
 {	
-	mysqli_query($conn, "commit");
+	mysqli_query($conn, "commit");				// ------------------------TRANSACION
     s_msg ('그동안 이용해주셔서 감사합니다');
     echo "<meta http-equiv='refresh' content='0;url=logout.php'>";
 }
+// -----------------------TRANSACION code 여기까지-----------------------------------
+
 
 ?>

@@ -7,21 +7,25 @@ ini_set("display_errors", 1);
 $connect = dbconnect($host,$dbid,$dbpass,$dbname);
 $check = $_GET["propertyNO"];
 
+// --------------------------------TRANSACION code 여기부터-------------------------------------
+mysqli_query($connect, "set autocommit = 0");					//---------------autocommit 해제
+mysqli_query($connect, "set transaction isolation level serializable"); //--isolation level 설정
+mysqli_query($connect, "begin");								//-----------begins a transation
+// --------------------------------TRANSACION code 여기까지-------------------------------------
 
-mysqli_query($connect, "set autocommit = 0");
-mysqli_query($connect, "set transaction isolation level serializable");
-mysqli_query($connect, "begin");
 
 $ret = mysqli_query($connect, "select * from property where propertyNO = $check");
 
-
+// -----------------------TRANSACION code 여기부터-----------------------------------
 if (!$ret) {
-	mysqli_query($connect, "rollback");
+	mysqli_query($connect, "rollback");			// ------------------------TRANSACION
 	msg('불러오기가 실패하였습니다. 다시 시도하여 주십시오.');
 }
 else {
-	mysqli_query($connect, "commit");
+	mysqli_query($connect, "commit");			// ------------------------TRANSACION
 }
+// -----------------------TRANSACION code 여기까지-----------------------------------
+
 
 
 
@@ -37,17 +41,19 @@ if(!$_COOKIE['cookie_id'] || !$_COOKIE['cookie_name']) {
 else {
 	$id = $_COOKIE['cookie_id'];
 	$res = mysqli_query($connect, "insert into wishList (userID, propertyNO) values ('$id', '$propertyNO')");
-		
+
+// -----------------------TRANSACION code 여기부터-----------------------------------
 	if(!$res) {
-		mysqli_query($connect, "rollback");
+		mysqli_query($connect, "rollback");		// ------------------------TRANSACION
 		msg('등록에 실패했습니다.');
 	}
 	else {
 
-		mysqli_query($connect, "commit");
+		mysqli_query($connect, "commit");		// ------------------------TRANSACION
 		msg('등록에 성공했습니다.');
 		echo "<meta http-equiv='refresh' content='0;url=user_likes_property.php?ID={$id}'>";
 	}
+// -----------------------TRANSACION code 여기까지-----------------------------------
 		
 }
 ?>

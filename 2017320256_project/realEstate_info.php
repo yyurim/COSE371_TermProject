@@ -8,22 +8,28 @@ include "util.php";
 ini_set("display_errors", 1);
 $conn = dbconnect($host, $dbid, $dbpass, $dbname);
 
-mysqli_query($conn, "set autocommit = 0");
-mysqli_query($conn, "set transaction isolation level read committed");
-mysqli_query($conn, "begin");
+// --------------------------------TRANSACION code 여기부터--------------------------------------
+mysqli_query($conn, "set autocommit = 0");					//----------------autocommit 해제
+mysqli_query($conn, "set transaction isolation level read committed"); //-isolation level 설정
+mysqli_query($conn, "begin");								//-----------begins a transation
+// --------------------------------TRANSACION code 여기까지--------------------------------------
+
 
 $realEstateID = $_GET["ID"];
 $query =  "select * from realEstate where realEstateID = '$realEstateID'";
 $ret = mysqli_query($conn, $query);
 
+// -----------------------TRANSACION code 여기부터-----------------------------------
 if(!$ret) {
-	mysqli_query($conn, "rollback");
+	mysqli_query($conn, "rollback");			// ------------------------TRANSACION
 	msg('불러오기가 실패하였습니다. 다시 시도하여 주십시오.');
 }
 
 else {
-	mysqli_query($conn, "commit");
+	mysqli_query($conn, "commit");				// ------------------------TRANSACION
 }
+// -----------------------TRANSACION code 여기까지-----------------------------------
+
 
 $realEstate = mysqli_fetch_array($ret);
 if(!$realEstate) {
